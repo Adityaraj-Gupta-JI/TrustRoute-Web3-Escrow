@@ -77,8 +77,3 @@ Follow these precise steps to spin up the entire hybrid ecosystem.
    PORT=5000
    SUPABASE_URL=[https://your-id.supabase.co](https://your-id.supabase.co)
    SUPABASE_KEY=your-anon-key
-<<<<<<< HEAD
-   CORDA_API_URL=http://localhost:10050/api/escrow
-=======
-   CORDA_API_URL=http://localhost:10050/api/escrow
->>>>>>> 5874e5342a326390803fb14b0153f82f7289faed
