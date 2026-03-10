@@ -1,0 +1,34 @@
+# 🛑 CRITICAL: Environment variables & Secrets
+.env
+.env.*
+.env.local
+*.pem
+*.key
+
+# 📦 Node.js (Frontend & Backend)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# 🅰️ Angular Build Output
+dist/
+tmp/
+out-tsc/
+bazel-out/
+.angular/
+
+# ☕ Corda / Java / Gradle
+.gradle/
+build/
+out/
+*.class
+*.jar
+*.keystore
+*.truststore
+
+# 💻 OS & Editor Files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
