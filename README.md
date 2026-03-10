@@ -1,70 +1,80 @@
-# Getting Started with Create React App
+# 🚚 TrustRoute Escrow: Web3 Logistics & Distributed Trust
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![TrustRoute Banner](https://img.shields.io/badge/Status-Hackathon_Ready-success?style=for-the-badge)
+![Tech Stack](https://img.shields.io/badge/Corda-Blockchain-red?style=flat-square) ![Tech Stack](https://img.shields.io/badge/Angular-Frontend-dd0031?style=flat-square) ![Tech Stack](https://img.shields.io/badge/Node.js-Oracle-339933?style=flat-square) ![Tech Stack](https://img.shields.io/badge/Supabase-Database-3ecf8e?style=flat-square)
 
-## Available Scripts
+**TrustRoute** is a decentralized, blockchain-powered logistics platform that replaces traditional trust with cryptographic certainty. By utilizing **Corda DLT (Distributed Ledger Technology)** and a custom **Fiat-to-Crypto Oracle Gateway**, TrustRoute ensures that delivery funds are locked in an immutable smart contract escrow until delivery is verified.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 📖 Product Requirements Document (PRD)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Problem Statement
+In the gig economy and freelance logistics sector, trust is broken. Drivers risk non-payment after delivery, while customers risk paying for goods that never arrive or arrive damaged. Centralized escrow services take massive fee cuts and lack transparency.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### The Solution
+A decentralized Web3 escrow service where:
+1. Customer funds are securely locked in a blockchain state (`LOCKED`).
+2. The Driver physically delivers the package.
+3. The Customer verifies receipt, triggering the smart contract to release funds (`RELEASED`).
+4. In case of failure, funds are frozen for arbitration (`DISPUTED`).
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🏛️ System Architecture & Design Document
 
-### `npm run build`
+TrustRoute is built on a hybrid Web2/Web3 architecture to maximize user experience while maintaining blockchain security.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Tech Stack
+* **Frontend (Web2 UI):** Angular 18, Tailwind CSS, RxJS.
+* **Middleware/Oracle (The Bridge):** Node.js, Express, Axios. Acts as an Oracle to feed off-chain real-world data (fiat payments) to the blockchain.
+* **Database (Off-chain State Cache):** Supabase (PostgreSQL) for blazing-fast UI rendering.
+* **Blockchain (On-chain Truth):** R3 Corda, Java, Spring Boot RestController. Manages the Escrow State Machine.
+* **Payments:** Simulated Fiat Gateway (Mock Razorpay Integration).
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Core Workflow (The Escrow State Machine)
+1. **Initiation:** Customer submits order details via Angular.
+2. **Oracle Verification:** Node.js intercepts the fiat payment and logs the pending state to Supabase.
+3. **Smart Contract Lock:** Node.js triggers the Corda Spring Boot `/create` endpoint. Corda generates an `EscrowState` and locks the funds on the ledger.
+4. **Fulfillment:** Driver delivers the item. Customer clicks "Confirm Delivery".
+5. **Consensus & Settlement:** The Node.js Oracle calls Corda's `/release` flow. The Corda nodes reach consensus, update the ledger, and the funds are programmatically released to the supplier.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## ⚖️ Technical Trade-offs (Pros & Cons)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Pros
+* **Immutability:** Financial states are stored on Corda; they cannot be tampered with by rogue database admins.
+* **Privacy:** Unlike public blockchains (Ethereum/Polygon), Corda's point-to-point architecture means transaction details are only shared on a "need-to-know" basis between the customer and driver.
+* **UX Focused:** Using Supabase as an off-chain cache allows the UI to load instantly without waiting for blockchain block times.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Cons
+* **Oracle Dependency:** The system relies on the Node.js middleware to act as a truthful Oracle between the fiat gateway and the Corda network. If the Oracle goes down, states cannot update.
+* **Setup Complexity:** Running JVM-based Corda nodes alongside a Node.js server and Angular frontend requires significant local resources.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🚀 How to Run the Project Locally
 
-## Learn More
+Follow these precise steps to spin up the entire hybrid ecosystem.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Prerequisites
+* Node.js (v18+)
+* Java Development Kit (JDK 8 for Corda 4.x)
+* Angular CLI (`npm install -g @angular/cli`)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Step 1: Start the Corda Blockchain Network
+1. Navigate to the Corda project directory.
+2. Build and deploy the nodes: `./gradlew deployNodes`
+3. Run the network: `build/nodes/runnodes`
+4. Start the Spring Boot Webserver Bridge: `./gradlew runWebserver` *(Runs on port 10050)*
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Step 2: Start the Node.js Oracle (Backend)
+1. Navigate to the `trustroute-backend` directory.
+2. Install dependencies: `npm install`
+3. Configure your `.env` file with your Supabase keys:
+   ```env
+   PORT=5000
+   SUPABASE_URL=[https://your-id.supabase.co](https://your-id.supabase.co)
+   SUPABASE_KEY=your-anon-key
+   CORDA_API_URL=http://localhost:10050/api/escrow
